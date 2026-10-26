@@ -1,4 +1,4 @@
-// ============ SCRIPT.JS - Formulir pemesanan & simulasi perjalanan Zogora ============
+// ============ SCRIPT.JS - Formulir pemesanan & simulasi perjalanan Zegora ============
 
 // ---------- A. PENGATURAN ----------
 // GANTI nomor WhatsApp tujuan (format internasional, tanpa + atau spasi)
@@ -125,7 +125,7 @@ form.addEventListener("submit", (e) => {
 
   // 3. Buka WhatsApp dengan pesan pesanan otomatis
   const text = encodeURIComponent(
-    `Halo Zogora, saya ingin memesan.\nNama: ${nama}\nLayanan: ${layanan}\nJemput: ${jemput}\nTujuan: ${tujuan}`,
+    `Halo Zegora, saya ingin memesan.\nNama: ${nama}\nLayanan: ${layanan}\nJemput: ${jemput}\nTujuan: ${tujuan}`,
   );
   window.open(`https://wa.me/${WA_NUMBER}?text=${text}`, "_blank", "noopener");
 
