@@ -1,0 +1,697 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Zogora – Transportasi online untuk kebutuhan harian</title>
+    <meta
+      name="description"
+      content="Pesan ojek, mobil, makanan, dan kirim paket dalam satu aplikasi. Kotamu, dalam jangkauan."
+    />
+
+    <!-- 1. LIBRARY & FONT -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Archivo:wght@700;800;900&family=Manrope:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      // Warna & font Zogora (ubah di sini untuk ganti tema)
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              ink: "#ffffff", // background utama
+              panel: "#f8f6f0", // section & area peta (krem sangat muda)
+              line: "#e8e4d8", // garis / border hangat
+              gold: "#b8860b", // emas: ikon, centang, border
+              gold2: "#8a6508", // emas tua: teks & hover
+              mute: "#6b675c", // teks abu hangat
+            },
+            fontFamily: {
+              display: ["Archivo", "sans-serif"],
+              body: ["Manrope", "sans-serif"],
+            },
+          },
+        },
+      };
+    </script>
+
+    <!-- 2. CSS KUSTOM -->
+    <link rel="stylesheet" href="style.css" />
+  </head>
+
+  <body>
+    <!-- 3. NAVBAR -->
+    <header
+      class="sticky top-0 z-40 backdrop-blur bg-ink/80 border-b border-line"
+    >
+      <nav
+        class="max-w-6xl mx-auto px-5 h-16 flex items-center justify-between"
+      >
+        <a
+          href="#"
+          class="flex items-center gap-2 font-display font-bold text-lg"
+        >
+          <span
+            class="w-8 h-8 rounded-lg btn-gold grid place-items-center text-sm"
+            >ZG</span
+          >
+          Zogora
+        </a>
+        <div class="hidden md:flex gap-8 text-sm text-mute">
+          <a href="#keunggulan" class="hover:text-gold2">Keunggulan</a>
+          <a href="#layanan" class="hover:text-gold2">Layanan</a>
+          <a href="#ulasan" class="hover:text-gold2">Ulasan</a>
+          <a href="#faq" class="hover:text-gold2">FAQ</a>
+        </div>
+        <a href="#pesan" class="btn-gold rounded-full px-5 py-2 text-sm"
+          >Pesan perjalanan</a
+        >
+      </nav>
+    </header>
+
+    <main>
+      <!-- 4. HERO + RUTE ANIMASI -->
+      <section class="relative overflow-hidden">
+        <div
+          class="absolute -top-40 left-1/2 -translate-x-1/2 w-[800px] h-[500px] rounded-full bg-gold/10 blur-3xl pointer-events-none"
+        ></div>
+        <div
+          class="relative max-w-6xl mx-auto px-5 pt-16 pb-20 grid lg:grid-cols-2 gap-12 items-center"
+        >
+          <div>
+            <p class="text-sm text-gold2 font-medium mb-4">
+              Transportasi online untuk kebutuhan harian
+            </p>
+            <h1
+              class="font-display font-black tracking-tight text-5xl sm:text-6xl leading-[1.05]"
+            >
+              Kotamu, <span class="gold-text">dalam jangkauan.</span>
+            </h1>
+            <p class="mt-6 text-mute max-w-md leading-relaxed">
+              Pesan perjalanan dengan harga transparan, pengemudi terverifikasi,
+              dan pelacakan langsung. Semua dalam satu aplikasi.
+            </p>
+            <div class="mt-8 flex flex-wrap gap-3">
+              <a href="#pesan" class="btn-gold rounded-xl px-6 py-3"
+                >Pesan perjalanan pertama</a
+              >
+              <a href="#layanan" class="btn-ghost rounded-xl px-6 py-3"
+                >Lihat semua layanan</a
+              >
+            </div>
+            <ul class="mt-6 flex flex-wrap gap-x-6 gap-y-2 text-sm text-mute">
+              <li class="flex items-center gap-2">
+                <span class="text-gold">✓</span> Tanpa biaya tersembunyi
+              </li>
+              <li class="flex items-center gap-2">
+                <span class="text-gold">✓</span> Dukungan 24/7
+              </li>
+            </ul>
+          </div>
+
+          <!-- Kartu rute: awal diam (idle), aktif setelah formulir dikirim -->
+          <div
+            id="tripCard"
+            data-state="idle"
+            class="card rounded-3xl p-4 hover:translate-y-0"
+          >
+            <div
+              class="flex items-center justify-between gap-3 px-2 py-2 text-xs"
+            >
+              <div>
+                <p class="text-mute">Status perjalanan</p>
+                <p
+                  id="statusTitle"
+                  class="font-semibold text-sm"
+                  aria-live="polite"
+                >
+                  Belum ada perjalanan
+                </p>
+              </div>
+              <span
+                id="statusChip"
+                class="rounded-full border border-line text-mute px-3 py-1 whitespace-nowrap"
+                >Menunggu pesanan</span
+              >
+            </div>
+
+            <div
+              class="relative rounded-2xl bg-panel border border-line overflow-hidden aspect-[4/3]"
+            >
+              <svg
+                viewBox="0 0 400 300"
+                class="w-full h-full"
+                role="img"
+                aria-label="Peta rute perjalanan dari titik jemput ke tujuan"
+              >
+                <defs>
+                  <pattern
+                    id="grid"
+                    width="30"
+                    height="30"
+                    patternUnits="userSpaceOnUse"
+                  >
+                    <path
+                      d="M30 0H0V30"
+                      fill="none"
+                      stroke="#ece8db"
+                      stroke-width="1"
+                    />
+                  </pattern>
+                  <linearGradient id="gold" x1="0" x2="1">
+                    <stop offset="0" stop-color="#c99a1e" />
+                    <stop offset="1" stop-color="#e8b923" />
+                  </linearGradient>
+                </defs>
+                <rect width="400" height="300" fill="url(#grid)" />
+                <path
+                  d="M0 220 Q120 180 220 230 T400 190"
+                  stroke="#ffffff"
+                  stroke-width="14"
+                  fill="none"
+                />
+                <path
+                  d="M70 0 Q110 120 90 300"
+                  stroke="#ffffff"
+                  stroke-width="12"
+                  fill="none"
+                />
+                <path
+                  d="M300 0 Q330 140 280 300"
+                  stroke="#ffffff"
+                  stroke-width="12"
+                  fill="none"
+                />
+                <!-- rute dasar (redup) -->
+                <path
+                  id="route"
+                  d="M60 230 C 90 120, 160 90, 210 140 S 300 210, 340 70"
+                  fill="none"
+                  stroke="#ebddae"
+                  stroke-width="8"
+                  stroke-linecap="round"
+                />
+                <!-- rute emas: terisi mengikuti kendaraan -->
+                <path
+                  id="routeGold"
+                  class="live"
+                  d="M60 230 C 90 120, 160 90, 210 140 S 300 210, 340 70"
+                  fill="none"
+                  stroke="url(#gold)"
+                  stroke-width="5"
+                  stroke-linecap="round"
+                />
+                <path
+                  class="live route-line"
+                  d="M60 230 C 90 120, 160 90, 210 140 S 300 210, 340 70"
+                  fill="none"
+                  stroke="#ffffff"
+                  stroke-width="1.5"
+                  stroke-linecap="round"
+                />
+                <!-- titik jemput -->
+                <circle
+                  class="pulse pulse-pickup"
+                  cx="60"
+                  cy="230"
+                  r="10"
+                  fill="#d4a017"
+                />
+                <circle
+                  cx="60"
+                  cy="230"
+                  r="7"
+                  fill="#ffffff"
+                  stroke="#b8860b"
+                  stroke-width="3"
+                />
+                <!-- tujuan -->
+                <circle
+                  class="pulse pulse-dest"
+                  cx="340"
+                  cy="70"
+                  r="10"
+                  fill="#d4a017"
+                  style="animation-delay: 1s"
+                />
+                <path
+                  d="M340 52c-9 0-15 6-15 14 0 10 15 26 15 26s15-16 15-26c0-8-6-14-15-14z"
+                  fill="#b8860b"
+                />
+                <circle cx="340" cy="66" r="5" fill="#ffffff" />
+                <!-- kendaraan (digerakkan script.js) -->
+                <g id="vehicle" class="live" transform="translate(60 230)">
+                  <circle r="13" fill="#d4a017" opacity=".25" />
+                  <circle r="9" fill="#e8b923" />
+                  <circle r="4" fill="#1a1814" />
+                </g>
+              </svg>
+              <div
+                id="etaBox"
+                class="hidden absolute left-3 bottom-3 rounded-lg bg-ink/90 backdrop-blur border border-line px-3 py-2 text-xs"
+              >
+                <p class="text-mute">Estimasi tiba</p>
+                <p id="etaText" class="font-semibold text-gold2">
+                  8 menit lagi
+                </p>
+              </div>
+            </div>
+
+            <p id="tripNote" class="px-2 pt-3 text-xs text-mute">
+              Isi formulir pemesanan untuk melihat rute dan pengemudi Anda di
+              sini.
+            </p>
+
+            <div
+              id="driverInfo"
+              class="hidden mt-3 flex items-center gap-3 rounded-2xl bg-panel border border-line p-3"
+            >
+              <div
+                id="driverInit"
+                class="w-10 h-10 rounded-full btn-gold grid place-items-center text-sm font-bold"
+              >
+                RS
+              </div>
+              <div class="flex-1 text-sm">
+                <p id="driverName" class="font-semibold">Razan Syabani</p>
+                <p id="driverVeh" class="text-xs text-mute">
+                  Honda Vesmet · D 3333 ZG
+                </p>
+              </div>
+              <button
+                id="tripAction"
+                class="btn-ghost rounded-lg px-3 py-1.5 text-xs"
+                type="button"
+              >
+                Hubungi
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 5. KEUNGGULAN -->
+      <section id="keunggulan" class="max-w-6xl mx-auto px-5 py-20">
+        <h2
+          class="font-display font-extrabold tracking-tight text-3xl sm:text-4xl max-w-xl"
+        >
+          Lebih mudah di setiap perjalanan.
+        </h2>
+        <p class="mt-3 text-mute">Semua yang Anda butuhkan, tanpa ribet.</p>
+        <div class="mt-10 grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <article class="card rounded-2xl p-6">
+            <div
+              class="w-11 h-11 rounded-xl bg-gold/10 text-gold grid place-items-center text-xl"
+            >
+              ₹
+            </div>
+            <h3 class="mt-5 font-display font-semibold text-lg">
+              Harga transparan
+            </h3>
+            <p class="mt-2 text-sm text-mute leading-relaxed">
+              Tarif terlihat sebelum Anda memesan dan tidak berubah di tengah
+              jalan.
+            </p>
+          </article>
+          <article class="card rounded-2xl p-6">
+            <div
+              class="w-11 h-11 rounded-xl bg-gold/10 text-gold grid place-items-center text-xl"
+            >
+              ◎
+            </div>
+            <h3 class="mt-5 font-display font-semibold text-lg">
+              Lacak langsung
+            </h3>
+            <p class="mt-2 text-sm text-mute leading-relaxed">
+              Pantau posisi pengemudi di peta dan bagikan perjalanan ke
+              keluarga.
+            </p>
+          </article>
+          <article class="card rounded-2xl p-6">
+            <div
+              class="w-11 h-11 rounded-xl bg-gold/10 text-gold grid place-items-center text-xl"
+            >
+              ⛨
+            </div>
+            <h3 class="mt-5 font-display font-semibold text-lg">
+              Aman sejak awal
+            </h3>
+            <p class="mt-2 text-sm text-mute leading-relaxed">
+              Pengemudi lolos verifikasi identitas dan pemeriksaan kendaraan.
+            </p>
+          </article>
+          <article class="card rounded-2xl p-6">
+            <div
+              class="w-11 h-11 rounded-xl bg-gold/10 text-gold grid place-items-center text-xl"
+            >
+              ✦
+            </div>
+            <h3 class="mt-5 font-display font-semibold text-lg">
+              Pusat bantuan
+            </h3>
+            <p class="mt-2 text-sm text-mute leading-relaxed">
+              Tim kami siap membantu kapan saja, lewat chat atau telepon.
+            </p>
+          </article>
+        </div>
+        <a href="#pesan" class="btn-gold inline-block rounded-xl px-6 py-3 mt-8"
+          >Coba Zogora sekarang</a
+        >
+      </section>
+
+      <!-- 6. LAYANAN -->
+      <section id="layanan" class="bg-panel border-y border-line">
+        <div class="max-w-6xl mx-auto px-5 py-20">
+          <h2
+            class="font-display font-extrabold tracking-tight text-3xl sm:text-4xl max-w-xl"
+          >
+            Satu aplikasi untuk banyak kebutuhan.
+          </h2>
+          <p class="mt-3 text-mute">
+            Pilih layanan yang sesuai dengan aktivitas harian Anda.
+          </p>
+          <div class="mt-10 grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <article class="card rounded-2xl p-6 flex flex-col">
+              <span class="text-3xl">🏍️</span>
+              <h3 class="mt-4 font-display font-semibold text-xl">ZoBike</h3>
+              <p class="mt-2 text-sm text-mute flex-1">
+                Ojek cepat untuk menembus macet dan jarak dekat.
+              </p>
+              <p class="mt-5 text-sm text-mute">
+                Mulai <span class="text-gold2 font-semibold">Rp 8.000</span>
+              </p>
+            </article>
+            <article class="card rounded-2xl p-6 flex flex-col">
+              <span class="text-3xl">🚗</span>
+              <h3 class="mt-4 font-display font-semibold text-xl">ZoCar</h3>
+              <p class="mt-2 text-sm text-mute flex-1">
+                Mobil nyaman ber-AC untuk keluarga dan rombongan.
+              </p>
+              <p class="mt-5 text-sm text-mute">
+                Mulai <span class="text-gold2 font-semibold">Rp 20.000</span>
+              </p>
+            </article>
+            <article class="card rounded-2xl p-6 flex flex-col">
+              <span class="text-3xl">🍜</span>
+              <h3 class="mt-4 font-display font-semibold text-xl">ZoFood</h3>
+              <p class="mt-2 text-sm text-mute flex-1">
+                Pesan makanan favorit dari restoran sekitar Anda.
+              </p>
+              <p class="mt-5 text-sm text-mute">
+                Ongkir mulai
+                <span class="text-gold2 font-semibold">Rp 5.000</span>
+              </p>
+            </article>
+            <article class="card rounded-2xl p-6 flex flex-col">
+              <span class="text-3xl">📦</span>
+              <h3 class="mt-4 font-display font-semibold text-xl">ZoSend</h3>
+              <p class="mt-2 text-sm text-mute flex-1">
+                Kirim paket dan dokumen sampai hari yang sama.
+              </p>
+              <p class="mt-5 text-sm text-mute">
+                Mulai <span class="text-gold2 font-semibold">Rp 10.000</span>
+              </p>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <!-- 7. BUKTI SOSIAL -->
+      <section id="ulasan" class="max-w-6xl mx-auto px-5 py-20">
+        <div
+          class="flex flex-col lg:flex-row lg:items-end justify-between gap-8"
+        >
+          <h2
+            class="font-display font-extrabold tracking-tight text-3xl sm:text-4xl max-w-md"
+          >
+            Perjalanan nyaman, dibuktikan bersama.
+          </h2>
+          <dl class="grid grid-cols-3 gap-3 text-center">
+            <div
+              class="card rounded-2xl px-5 py-4 hover:translate-y-0 flex flex-col-reverse"
+            >
+              <dt class="text-xs text-mute mt-1">Rating aplikasi</dt>
+              <dd class="font-display font-bold text-2xl gold-text">4,8/5</dd>
+            </div>
+            <div
+              class="card rounded-2xl px-5 py-4 hover:translate-y-0 flex flex-col-reverse"
+            >
+              <dt class="text-xs text-mute mt-1">Pengguna aktif</dt>
+              <dd class="font-display font-bold text-2xl gold-text">22rb+</dd>
+            </div>
+            <div
+              class="card rounded-2xl px-5 py-4 hover:translate-y-0 flex flex-col-reverse"
+            >
+              <dt class="text-xs text-mute mt-1">Mitra bisnis</dt>
+              <dd class="font-display font-bold text-2xl gold-text">80+</dd>
+            </div>
+          </dl>
+        </div>
+
+        <ul
+          class="mt-12 grid grid-cols-2 md:grid-cols-4 border-y border-line md:divide-x divide-line text-center font-display font-semibold text-mute"
+          aria-label="Mitra Zogora"
+        >
+          <li class="py-6">Detikcom</li>
+          <li class="py-6">Kumparan</li>
+          <li class="py-6">Tribunnews</li>
+          <li class="py-6">Bisnis.com</li>
+        </ul>
+
+        <div class="mt-10 grid md:grid-cols-2 gap-4">
+          <figure class="card rounded-2xl p-7">
+            <blockquote class="leading-relaxed">
+              “Harga yang tertera sama persis dengan yang saya bayar.
+              Pengemudinya ramah dan datang tepat waktu.”
+            </blockquote>
+            <figcaption class="mt-5 text-sm">
+              <span class="font-semibold">Riski</span>
+              <span class="text-mute">· pengguna ZoBike</span>
+            </figcaption>
+          </figure>
+          <figure class="card rounded-2xl p-7">
+            <blockquote class="leading-relaxed">
+              “Pesanan toko kami jadi lebih cepat sampai. Pelanggan senang
+              karena bisa melacak paketnya.”
+            </blockquote>
+            <figcaption class="mt-5 text-sm">
+              <span class="font-semibold">Dimas Septo</span>
+              <span class="text-mute">· mitra ZoSend</span>
+            </figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <!-- 8. FAQ -->
+      <section id="faq" class="bg-panel border-y border-line">
+        <div class="max-w-6xl mx-auto px-5 py-20 grid lg:grid-cols-2 gap-12">
+          <div>
+            <h2
+              class="font-display font-extrabold tracking-tight text-3xl sm:text-4xl"
+            >
+              Sebelum Anda berangkat.
+            </h2>
+            <p class="mt-3 text-mute max-w-sm">
+              Jawaban singkat untuk pertanyaan yang paling sering diajukan.
+            </p>
+          </div>
+          <div class="divide-y divide-line border-y border-line">
+            <details class="py-5" open>
+              <summary class="flex justify-between items-center font-semibold">
+                Bagaimana cara memesan perjalanan?
+                <span class="plus text-gold text-2xl">+</span>
+              </summary>
+              <p class="mt-3 text-sm text-mute leading-relaxed">
+                Isi formulir pemesanan di bawah, tentukan titik jemput dan
+                tujuan, lalu kirim. Tim kami akan mengonfirmasi lewat WhatsApp.
+              </p>
+            </details>
+            <details class="py-5">
+              <summary class="flex justify-between items-center font-semibold">
+                Apakah harga yang ditampilkan sudah final?
+                <span class="plus text-gold text-2xl">+</span>
+              </summary>
+              <p class="mt-3 text-sm text-mute leading-relaxed">
+                Ya. Tarif yang Anda lihat adalah tarif yang Anda bayar, tanpa
+                biaya tersembunyi.
+              </p>
+            </details>
+            <details class="py-5">
+              <summary class="flex justify-between items-center font-semibold">
+                Apa saja fitur keamanan Zogora?
+                <span class="plus text-gold text-2xl">+</span>
+              </summary>
+              <p class="mt-3 text-sm text-mute leading-relaxed">
+                Pengemudi terverifikasi, perjalanan bisa dibagikan ke kontak
+                terdekat, dan bantuan darurat tersedia 24 jam.
+              </p>
+            </details>
+            <details class="py-5">
+              <summary class="flex justify-between items-center font-semibold">
+                Di kota mana Zogora tersedia?
+                <span class="plus text-gold text-2xl">+</span>
+              </summary>
+              <p class="mt-3 text-sm text-mute leading-relaxed">
+                Saat ini Zogora melayani beberapa kota besar di Jawa Barat dan
+                terus bertambah.
+              </p>
+            </details>
+          </div>
+        </div>
+      </section>
+
+      <!-- 9. FORMULIR PEMESANAN + CTA -->
+      <section id="pesan" class="max-w-6xl mx-auto px-5 py-20">
+        <div
+          class="relative overflow-hidden rounded-3xl border border-line bg-panel p-8 sm:p-12 grid lg:grid-cols-2 gap-10"
+        >
+          <div class="relative">
+            <h2
+              class="font-display font-black tracking-tight text-4xl sm:text-5xl leading-tight"
+            >
+              Ke tujuan lebih mudah bersama
+              <span class="gold-text">Zogora.</span>
+            </h2>
+            <p class="mt-4 text-mute max-w-sm">
+              Isi formulir, kami konfirmasi pesanan Anda lewat WhatsApp dalam
+              hitungan menit.
+            </p>
+          </div>
+
+          <!-- Pesanan dikirim ke WhatsApp, riwayat disimpan ke email lewat Formspree -->
+          <form
+            id="orderForm"
+            class="relative space-y-4"
+            action="https://formspree.io/f/GANTI_FORM_ID"
+            method="POST"
+            novalidate
+          >
+            <div>
+              <label for="nama" class="text-sm text-mute">Nama lengkap</label>
+              <input
+                id="nama"
+                name="nama"
+                required
+                class="mt-1 w-full rounded-xl bg-ink border border-line px-4 py-3 focus:border-gold outline-none"
+                placeholder="Contoh: Ghozi Al Gifari"
+              />
+            </div>
+            <div>
+              <label for="layananPilih" class="text-sm text-mute"
+                >Layanan</label
+              >
+              <select
+                id="layananPilih"
+                name="layanan"
+                class="mt-1 w-full rounded-xl bg-ink border border-line px-4 py-3 focus:border-gold outline-none"
+              >
+                <option>ZoBike</option>
+                <option>ZoCar</option>
+                <option>ZoFood</option>
+                <option>ZoSend</option>
+              </select>
+            </div>
+            <div class="grid sm:grid-cols-2 gap-4">
+              <div>
+                <label for="jemput" class="text-sm text-mute"
+                  >Titik jemput</label
+                >
+                <input
+                  id="jemput"
+                  name="titik_jemput"
+                  required
+                  class="mt-1 w-full rounded-xl bg-ink border border-line px-4 py-3 focus:border-gold outline-none"
+                  placeholder="Alamat jemput"
+                />
+              </div>
+              <div>
+                <label for="tujuan" class="text-sm text-mute">Tujuan</label>
+                <input
+                  id="tujuan"
+                  name="tujuan"
+                  required
+                  class="mt-1 w-full rounded-xl bg-ink border border-line px-4 py-3 focus:border-gold outline-none"
+                  placeholder="Alamat tujuan"
+                />
+              </div>
+            </div>
+            <input
+              type="text"
+              name="_gotcha"
+              tabindex="-1"
+              autocomplete="off"
+              class="hidden"
+            />
+            <p id="formMsg" class="text-sm min-h-[1.25rem]" role="status"></p>
+            <button
+              id="submitBtn"
+              type="submit"
+              class="btn-gold w-full rounded-xl px-6 py-3.5"
+            >
+              Kirim pesanan via WhatsApp
+            </button>
+          </form>
+        </div>
+      </section>
+    </main>
+
+    <!-- 10. FOOTER -->
+    <footer class="border-t border-line">
+      <div
+        class="max-w-6xl mx-auto px-5 py-12 grid gap-10 md:grid-cols-4 text-sm"
+      >
+        <div>
+          <a
+            href="#"
+            class="flex items-center gap-2 font-display font-bold text-lg"
+          >
+            <span
+              class="w-8 h-8 rounded-lg btn-gold grid place-items-center text-sm"
+              >ZG</span
+            >
+            Zogora
+          </a>
+          <p class="mt-3 text-mute max-w-[16rem]">
+            Transportasi online untuk kebutuhan harian Anda.
+          </p>
+        </div>
+        <div>
+          <p class="font-semibold mb-3">Zogora</p>
+          <ul class="space-y-2 text-mute">
+            <li>
+              <a class="hover:text-gold2" href="#keunggulan">Keunggulan</a>
+            </li>
+            <li><a class="hover:text-gold2" href="#layanan">Layanan</a></li>
+            <li><a class="hover:text-gold2" href="#ulasan">Ulasan</a></li>
+          </ul>
+        </div>
+        <div>
+          <p class="font-semibold mb-3">Bantuan</p>
+          <ul class="space-y-2 text-mute">
+            <li><a class="hover:text-gold2" href="#faq">FAQ</a></li>
+            <li><a class="hover:text-gold2" href="#pesan">Hubungi kami</a></li>
+            <li><a class="hover:text-gold2" href="#">Kebijakan privasi</a></li>
+          </ul>
+        </div>
+        <div>
+          <p class="font-semibold mb-3">Kontak</p>
+          <ul class="space-y-2 text-mute">
+            <li>halo@zogora.id</li>
+            <li>+62 8958-0772-1010</li>
+            <li>Bandung, Jawa Barat</li>
+          </ul>
+        </div>
+      </div>
+      <p class="border-t border-line py-5 text-center text-xs text-mute">
+        © 2026 Zogora Indonesia. Hak cipta dilindungi.
+      </p>
+    </footer>
+
+    <!-- 11. JAVASCRIPT -->
+    <script src="script.js"></script>
+  </body>
+</html>

@@ -1,0 +1,132 @@
+/* ============ STYLE.CSS - Zogora (tema terang: netral hangat + emas) ============ */
+html {
+  scroll-behavior: smooth;
+}
+body {
+  background: #ffffff;
+  color: #1a1814;
+  font-family: "Manrope", sans-serif;
+}
+
+.gold-text {
+  background: linear-gradient(100deg, #8a6508, #b8860b 55%, #9a7410);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.btn-gold {
+  background: linear-gradient(135deg, #f5d060, #e8b923 55%, #d4a017);
+  color: #1a1814;
+  font-weight: 600;
+  transition:
+    transform 0.2s,
+    box-shadow 0.2s;
+}
+.btn-gold:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(212, 160, 23, 0.35);
+}
+.btn-ghost {
+  border: 1px solid #ddd8c8;
+  background: #fff;
+  color: #1a1814;
+  transition:
+    border-color 0.2s,
+    color 0.2s;
+}
+.btn-ghost:hover {
+  border-color: #b8860b;
+  color: #8a6508;
+}
+.card {
+  background: #fff;
+  border: 1px solid #e8e4d8;
+  box-shadow: 0 1px 2px rgba(26, 24, 20, 0.04);
+  transition:
+    border-color 0.25s,
+    transform 0.25s,
+    box-shadow 0.25s;
+}
+.card:hover {
+  border-color: #d4a017;
+  transform: translateY(-4px);
+  box-shadow: 0 10px 28px rgba(26, 24, 20, 0.08);
+}
+:focus-visible {
+  outline: 2px solid #b8860b;
+  outline-offset: 3px;
+}
+
+/* Animasi rute: mengikuti #tripCard[data-state] (idle > searching > ontrip > arrived) */
+.live {
+  opacity: 0;
+  transition: opacity 0.5s;
+}
+.route-line {
+  stroke-dasharray: 14 10;
+  animation: flow 1.2s linear infinite;
+}
+.pulse {
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: pulse 2s ease-out infinite;
+}
+@keyframes flow {
+  to {
+    stroke-dashoffset: -24;
+  }
+}
+@keyframes pulse {
+  0% {
+    transform: scale(0.6);
+    opacity: 0.9;
+  }
+  100% {
+    transform: scale(2.6);
+    opacity: 0;
+  }
+}
+#tripCard[data-state="searching"] .pulse-pickup {
+  opacity: 1;
+}
+#tripCard[data-state="ontrip"] .live,
+#tripCard[data-state="arrived"] .live {
+  opacity: 1;
+}
+#tripCard[data-state="ontrip"] .pulse-dest {
+  opacity: 1;
+}
+#tripCard[data-state="arrived"] .route-line {
+  animation: none;
+  opacity: 0;
+}
+#tripCard[data-state="ontrip"] #statusChip,
+#tripCard[data-state="arrived"] #statusChip,
+#tripCard[data-state="searching"] #statusChip {
+  border-color: #d4a017;
+  color: #8a6508;
+  background: rgba(212, 160, 23, 0.08);
+}
+
+/* FAQ */
+details summary {
+  list-style: none;
+  cursor: pointer;
+}
+details summary::-webkit-details-marker {
+  display: none;
+}
+details[open] .plus {
+  transform: rotate(45deg);
+}
+.plus {
+  transition: transform 0.25s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    transition: none !important;
+  }
+}
