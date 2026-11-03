@@ -1,4 +1,4 @@
-    User-agent: *
-Allow: /
+   User-agent: *
+   Allow: /
 
-Sitemap: https://zegora-ghozialgfr.vercel.app/
+   Sitemap: https://zegora-ghozialgfr.vercel.app/sitemap.xml
