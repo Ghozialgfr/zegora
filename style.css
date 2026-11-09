@@ -1,13 +1,11 @@
-/* ============ STYLE.CSS - Zegora (tema terang: netral hangat + emas) ============ */
 html {
   scroll-behavior: smooth;
 }
 body {
-  background: #ffffff;
+  background: #fff;
   color: #1a1814;
-  font-family: "Manrope", sans-serif;
+  font-family: Manrope, sans-serif;
 }
-
 .gold-text {
   background: linear-gradient(100deg, #8a6508, #b8860b 55%, #9a7410);
   -webkit-background-clip: text;
@@ -53,24 +51,22 @@ body {
   box-shadow: 0 10px 28px rgba(26, 24, 20, 0.08);
 }
 :focus-visible {
-  outline: 2px solid #b8860b;
+  outline: #b8860b solid 2px;
   outline-offset: 3px;
 }
-
-/* Animasi rute: mengikuti #tripCard[data-state] (idle > searching > ontrip > arrived) */
 .live {
   opacity: 0;
   transition: opacity 0.5s;
 }
 .route-line {
   stroke-dasharray: 14 10;
-  animation: flow 1.2s linear infinite;
+  animation: 1.2s linear infinite flow;
 }
 .pulse {
   opacity: 0;
   transform-box: fill-box;
   transform-origin: center;
-  animation: pulse 2s ease-out infinite;
+  animation: 2s ease-out infinite pulse;
 }
 @keyframes flow {
   to {
@@ -87,29 +83,23 @@ body {
     opacity: 0;
   }
 }
-#tripCard[data-state="searching"] .pulse-pickup {
-  opacity: 1;
-}
+#tripCard[data-state="arrived"] .live,
 #tripCard[data-state="ontrip"] .live,
-#tripCard[data-state="arrived"] .live {
-  opacity: 1;
-}
-#tripCard[data-state="ontrip"] .pulse-dest {
+#tripCard[data-state="ontrip"] .pulse-dest,
+#tripCard[data-state="searching"] .pulse-pickup {
   opacity: 1;
 }
 #tripCard[data-state="arrived"] .route-line {
   animation: none;
   opacity: 0;
 }
-#tripCard[data-state="ontrip"] #statusChip,
 #tripCard[data-state="arrived"] #statusChip,
+#tripCard[data-state="ontrip"] #statusChip,
 #tripCard[data-state="searching"] #statusChip {
   border-color: #d4a017;
   color: #8a6508;
   background: rgba(212, 160, 23, 0.08);
 }
-
-/* FAQ */
 details summary {
   list-style: none;
   cursor: pointer;
@@ -123,7 +113,6 @@ details[open] .plus {
 .plus {
   transition: transform 0.25s;
 }
-
 @media (prefers-reduced-motion: reduce) {
   * {
     animation: none !important;
