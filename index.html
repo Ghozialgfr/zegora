@@ -146,9 +146,16 @@
             <div
               class="relative rounded-2xl bg-panel border border-line overflow-hidden aspect-[4/3]"
             >
+              <!-- Gambar latar peta -->
+              <img
+                src="img/hero-jalan.png"
+                alt=""
+                aria-hidden="true"
+                class="absolute inset-0 w-full h-full object-cover"
+              />
               <svg
                 viewBox="0 0 400 300"
-                class="w-full h-full"
+                class="relative w-full h-full"
                 role="img"
                 aria-label="Peta rute perjalanan dari titik jemput ke tujuan"
               >
@@ -171,25 +178,6 @@
                     <stop offset="1" stop-color="#e8b923" />
                   </linearGradient>
                 </defs>
-                <rect width="400" height="300" fill="url(#grid)" />
-                <path
-                  d="M0 220 Q120 180 220 230 T400 190"
-                  stroke="#ffffff"
-                  stroke-width="14"
-                  fill="none"
-                />
-                <path
-                  d="M70 0 Q110 120 90 300"
-                  stroke="#ffffff"
-                  stroke-width="12"
-                  fill="none"
-                />
-                <path
-                  d="M300 0 Q330 140 280 300"
-                  stroke="#ffffff"
-                  stroke-width="12"
-                  fill="none"
-                />
                 <!-- rute dasar (redup) -->
                 <path
                   id="route"
@@ -295,6 +283,7 @@
               </button>
             </div>
           </div>
+          <!-- penutup #tripCard -->
         </div>
       </section>
 
